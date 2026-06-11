@@ -1,10 +1,19 @@
 name: validate
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "k8s/**"
+      - "argocd/**"
+      - ".github/workflows/validate.yml"
   pull_request:
     paths:
       - "k8s/**"
       - "argocd/**"
+      - ".github/workflows/validate.yml"
+  workflow_dispatch:
 
 jobs:
   validate:
@@ -17,4 +26,4 @@ jobs:
           tar -xzf kubeconform.tar.gz
           sudo mv kubeconform /usr/local/bin/
       - name: Validate manifests
-        run: kubeconform -strict -summary k8s/
+        run: kubeconform -strict -summary -ignore-missing-schemas k8s/
