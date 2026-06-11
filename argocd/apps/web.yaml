@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/anons2003/gitops.git
     targetRevision: main
-    path: 
+    path: k8s
   destination:
     server: https://kubernetes.default.svc
     namespace: demo
