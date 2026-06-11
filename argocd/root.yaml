@@ -4,6 +4,7 @@ metadata:
   name: root
   namespace: argocd
 spec:
+  project: default
   source:
     repoURL: https://github.com/anons2003/gitops.git
     targetRevision: main
