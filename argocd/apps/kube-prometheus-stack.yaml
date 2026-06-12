@@ -21,6 +21,37 @@ spec:
             serviceMonitorNamespaceSelector: {}
             ruleSelectorNilUsesHelmValues: false
             ruleNamespaceSelector: {}
+        alertmanager:
+          alertmanagerSpec:
+            secrets:
+              - alertmanager-gmail
+          config:
+            global:
+              smtp_smarthost: smtp.gmail.com:587
+              smtp_from: trucltde170267@fpt.edu.vn
+              smtp_auth_username: trucltde170267@fpt.edu.vn
+              smtp_auth_password_file: /etc/alertmanager/secrets/alertmanager-gmail/password
+              smtp_require_tls: true
+            route:
+              receiver: email-personal
+              group_by:
+                - alertname
+                - namespace
+              group_wait: 10s
+              group_interval: 1m
+              repeat_interval: 30m
+              routes:
+                - receiver: email-personal
+                  matchers:
+                    - alertname = "ApiHighErrorRate"
+                - receiver: email-personal
+                  matchers:
+                    - alertname = "TestMailAlert"
+            receivers:
+              - name: email-personal
+                email_configs:
+                  - to: trucltde170267@fpt.edu.vn
+                    send_resolved: true
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
