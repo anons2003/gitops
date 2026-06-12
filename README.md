@@ -385,3 +385,60 @@ kubectl -n argocd patch app web --type merge \
 - App-of-apps giúp quản lý nhiều Application bằng một root.
 - Sync waves giúp apply resource đúng thứ tự.
 - CI validate manifest trước khi merge vào `main`.
+
+## Challenge: Ship Smartly
+
+Mục tiêu của challenge là chứng minh rollout có guardrail bằng metric, không chỉ promote hoặc abort thủ công.
+
+SLO:
+
+```text
+API success rate >= 95%
+```
+
+SLI:
+
+```text
+1 - error_rate
+```
+
+Error rate được đo bằng PromQL:
+
+```promql
+sum(rate(flask_http_request_total{namespace="demo",status=~"5.."}[1m]))
+/
+sum(rate(flask_http_request_total{namespace="demo"}[1m]))
+```
+
+Alert:
+
+```text
+ApiHighErrorRate fires when error_rate > 5% for 1m.
+```
+
+Canary guard:
+
+```text
+AnalysisTemplate api-error-rate queries Prometheus during rollout.
+```
+
+Abort rule:
+
+```text
+result[0] > 0.05
+```
+
+Rollback:
+
+```text
+git revert commit lỗi, push qua PR, merge vào main, ArgoCD sync về bản cũ.
+```
+
+Các resource liên quan:
+
+```text
+k8s-api/prometheusrule.yaml
+k8s-api/analysis-template.yaml
+k8s-api/api.yaml
+argocd/apps/kube-prometheus-stack.yaml
+```

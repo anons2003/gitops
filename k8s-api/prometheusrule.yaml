@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: api-slo-alerts
+  namespace: demo
+  labels:
+    app: api
+spec:
+  groups:
+    - name: api-slo
+      rules:
+        - alert: ApiHighErrorRate
+          expr: |
+            (
+              sum(rate(flask_http_request_total{namespace="demo",status=~"5.."}[1m]))
+              /
+              sum(rate(flask_http_request_total{namespace="demo"}[1m]))
+            ) > 0.05
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "API error rate is above 5%"
+            description: "API is burning error budget: error rate > 5% for 1 minute."

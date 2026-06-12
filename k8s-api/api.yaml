@@ -33,12 +33,17 @@ spec:
               port: 8080
   strategy:
     canary:
+      analysis:
+        templates:
+          - templateName: api-error-rate
+        startingStep: 1
       steps:
         - setWeight: 25
-        - pause: {}
+        - pause:
+            duration: 60s
         - setWeight: 50
         - pause:
-            duration: 30s
+            duration: 60s
         - setWeight: 100
 ---
 apiVersion: v1
