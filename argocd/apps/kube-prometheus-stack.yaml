@@ -15,6 +15,11 @@ spec:
       values: |
         grafana:
           adminPassword: admin
+        prometheusOperator:
+          admissionWebhooks:
+            enabled: false
+            patch:
+              enabled: false
         prometheus:
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
@@ -33,7 +38,7 @@ spec:
               smtp_auth_password_file: /etc/alertmanager/secrets/alertmanager-gmail/password
               smtp_require_tls: true
             route:
-              receiver: email-personal
+              receiver: "null"
               group_by:
                 - alertname
                 - namespace
@@ -48,6 +53,7 @@ spec:
                   matchers:
                     - alertname = "TestMailAlert"
             receivers:
+              - name: "null"
               - name: email-personal
                 email_configs:
                   - to: trucltde170267@fpt.edu.vn

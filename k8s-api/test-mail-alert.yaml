@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: test-mail-alert
+  namespace: demo
+  labels:
+    app: api
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: test-mail
+      rules:
+        - alert: TestMailAlert
+          expr: vector(1)
+          for: 30s
+          labels:
+            severity: warning
+          annotations:
+            summary: "Test email from Alertmanager"
+            description: "This alert is only for testing email delivery."
